@@ -12,6 +12,8 @@
 		263467502A31218700D63323 /* EKBrowserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2634674F2A31218700D63323 /* EKBrowserViewController.swift */; };
 		263467552A31218800D63323 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 263467542A31218800D63323 /* Assets.xcassets */; };
 		263467582A31218800D63323 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 263467562A31218800D63323 /* LaunchScreen.storyboard */; };
+		263467612A31231B00D63323 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 263467602A31231B00D63323 /* SnapKit */; };
+		263467632A3124FF00D63323 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 263467622A3124FF00D63323 /* Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +24,7 @@
 		263467542A31218800D63323 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		263467572A31218800D63323 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		263467592A31218800D63323 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		263467622A3124FF00D63323 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -29,6 +32,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				263467612A31231B00D63323 /* SnapKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -57,6 +61,7 @@
 				2634674B2A31218700D63323 /* AppDelegate.swift */,
 				2634674D2A31218700D63323 /* SceneDelegate.swift */,
 				2634674F2A31218700D63323 /* EKBrowserViewController.swift */,
+				263467622A3124FF00D63323 /* Extensions.swift */,
 				263467542A31218800D63323 /* Assets.xcassets */,
 				263467562A31218800D63323 /* LaunchScreen.storyboard */,
 				263467592A31218800D63323 /* Info.plist */,
@@ -80,6 +85,9 @@
 			dependencies = (
 			);
 			name = EKBrowser;
+			packageProductDependencies = (
+				263467602A31231B00D63323 /* SnapKit */,
+			);
 			productName = EKBrowser;
 			productReference = 263467482A31218700D63323 /* EKBrowser.app */;
 			productType = "com.apple.product-type.application";
@@ -108,6 +116,9 @@
 				Base,
 			);
 			mainGroup = 2634673F2A31218700D63323;
+			packageReferences = (
+				2634675F2A31231B00D63323 /* XCRemoteSwiftPackageReference "SnapKit" */,
+			);
 			productRefGroup = 263467492A31218700D63323 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -137,6 +148,7 @@
 				263467502A31218700D63323 /* EKBrowserViewController.swift in Sources */,
 				2634674C2A31218700D63323 /* AppDelegate.swift in Sources */,
 				2634674E2A31218700D63323 /* SceneDelegate.swift in Sources */,
+				263467632A3124FF00D63323 /* Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -344,6 +356,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		2634675F2A31231B00D63323 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SnapKit/SnapKit";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		263467602A31231B00D63323 /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2634675F2A31231B00D63323 /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = SnapKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 263467402A31218700D63323 /* Project object */;
 }
