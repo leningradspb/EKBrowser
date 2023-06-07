@@ -5,6 +5,8 @@
 //  Created by Eduard Kanevskii on 07.06.2023.
 //
 
+// MARK: - for search just tap "return" button after enter url
+
 import UIKit
 // I prefer programatically UI. IMHO SnapKit is the best library for programatically layout.
 import SnapKit
@@ -39,7 +41,8 @@ final class EKBrowserViewController: UIViewController {
         searchTextField.layer.borderColor = UIColor.darkGray.cgColor
         searchTextField.layer.borderWidth = UIConstants.borderWidth
         searchTextField.layer.cornerRadius = UIConstants.cornerRadius
-        searchTextField.addTarget(self, action: #selector(searchTextFieldEditingChanged), for: .editingChanged)
+        // MARK: - if required exactly request after enter text uncomment it
+//        searchTextField.addTarget(self, action: #selector(searchTextFieldEditingChanged), for: .editingChanged)
         
         searchTextField.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(Layout.top.rawValue)
@@ -100,7 +103,15 @@ final class EKBrowserViewController: UIViewController {
     }
     
     @objc private func showNavigationActionsHistoryViewController() {
-        
+        let vc = HistoryNavigationActionsViewController()
+        vc.urlTapped = { [weak self] urlString in
+            // todo: handle in real project
+            if let url = URL(string: urlString) {
+                self?.searchTextField.text = urlString
+                self?.requestBy(URL: url)
+            }
+        }
+        self.present(vc, animated: true)
     }
 }
 
@@ -125,18 +136,19 @@ extension EKBrowserViewController: WKNavigationDelegate {
             return
         }
         
-        print(url.absoluteString)
-        if var savedLinks = UserDefaults.standard.array(forKey: UserDefaultsKeys.links) as? [URL] {
-            savedLinks.append(url)
+        let absoluteString = url.absoluteString
+        if var savedLinks = UserDefaults.standard.stringArray(forKey: UserDefaultsKeys.links) {
+            savedLinks.append(absoluteString)
             UserDefaults.standard.set(savedLinks, forKey: UserDefaultsKeys.links)
         } else {
-            UserDefaults.standard.set([url], forKey: UserDefaultsKeys.links)
+            UserDefaults.standard.set([absoluteString], forKey: UserDefaultsKeys.links)
         }
-        
         
         decisionHandler(.allow)
     }
 }
+
+// MARK: - all of that stuff down below should be in different files (in real project)
 
 // Also possible use struct
 enum Layout: Int {
@@ -153,5 +165,5 @@ struct UIConstants {
 }
 
 struct UserDefaultsKeys {
-    static let links: String = links
+    static let links: String = "links"
 }
