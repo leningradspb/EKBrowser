@@ -14,6 +14,7 @@ import WebKit
 final class EKBrowserViewController: UIViewController {
     // private for encapsulation
     private let searchTextField = UITextField()
+    private let historyButton = UIButton()
     private let webView = WKWebView()
     
     // used for auto request in textFieldDidEndEditing
@@ -21,6 +22,7 @@ final class EKBrowserViewController: UIViewController {
     private let pendingValueForAutoRequest: Int = 2
     private let baseUrl = "https://www."
     private let searchTextFieldPlaceholder = "Enter URL address"
+    private let historyButtonTitle = "History"
     
     // Possible use init() if use DI, but for test project viewDidLoad also good.
     override func viewDidLoad() {
@@ -30,7 +32,7 @@ final class EKBrowserViewController: UIViewController {
 
     private func setupUI() {
         view.backgroundColor = .white
-        view.addSubviews([searchTextField, webView])
+        view.addSubviews([searchTextField, historyButton, webView])
         searchTextField.delegate = self
         searchTextField.placeholder = searchTextFieldPlaceholder
         searchTextField.text = baseUrl
@@ -42,7 +44,20 @@ final class EKBrowserViewController: UIViewController {
         searchTextField.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(Layout.top.rawValue)
             $0.leading.equalToSuperview().offset(Layout.leading.rawValue)
+            $0.height.equalTo(Layout.textFieldHeigh.rawValue)
+        }
+        
+        historyButton.setTitle(historyButtonTitle, for: .normal)
+        historyButton.setTitle(historyButtonTitle, for: .selected)
+        historyButton.setTitleColor(.black, for: .selected)
+        historyButton.setTitleColor(.black, for: .normal)
+        
+        historyButton.addTarget(self, action: #selector(showNavigationActionsHistoryViewController), for: .touchUpInside)
+        historyButton.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(Layout.top.rawValue)
+            $0.leading.equalTo(searchTextField.snp.trailing).offset(Layout.leading.rawValue)
             $0.trailing.equalToSuperview().offset(Layout.trailing.rawValue)
+            $0.width.equalTo(Layout.historyButtonWidth.rawValue)
             $0.height.equalTo(Layout.textFieldHeigh.rawValue)
         }
         
@@ -83,6 +98,10 @@ final class EKBrowserViewController: UIViewController {
         
         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(pendingValueForAutoRequest), execute: requestWorkItem)
     }
+    
+    @objc private func showNavigationActionsHistoryViewController() {
+        
+    }
 }
 
 extension EKBrowserViewController: UITextFieldDelegate
@@ -107,6 +126,13 @@ extension EKBrowserViewController: WKNavigationDelegate {
         }
         
         print(url.absoluteString)
+        if var savedLinks = UserDefaults.standard.array(forKey: UserDefaultsKeys.links) as? [URL] {
+            savedLinks.append(url)
+            UserDefaults.standard.set(savedLinks, forKey: UserDefaultsKeys.links)
+        } else {
+            UserDefaults.standard.set([url], forKey: UserDefaultsKeys.links)
+        }
+        
         
         decisionHandler(.allow)
     }
@@ -117,10 +143,15 @@ enum Layout: Int {
     case top, leading = 8
     case bottom, trailing = -8
     case textFieldHeigh = 60
+    case historyButtonWidth = 80
 }
 
 // Also possible use enum
 struct UIConstants {
     static let cornerRadius: CGFloat = 8
     static let borderWidth: CGFloat = 1
+}
+
+struct UserDefaultsKeys {
+    static let links: String = links
 }
