@@ -19,6 +19,8 @@ final class EKBrowserViewController: UIViewController {
     // used for auto request in textFieldDidEndEditing
     private var pendingRequestWorkItem: DispatchWorkItem?
     private let pendingValueForAutoRequest: Int = 2
+    private let baseUrl = "https://www."
+    private let searchTextFieldPlaceholder = "Enter URL address"
     
     // Possible use init() if use DI, but for test project viewDidLoad also good.
     override func viewDidLoad() {
@@ -30,10 +32,12 @@ final class EKBrowserViewController: UIViewController {
         view.backgroundColor = .white
         view.addSubviews([searchTextField, webView])
         searchTextField.delegate = self
-        searchTextField.placeholder = "Enter URL address"
+        searchTextField.placeholder = searchTextFieldPlaceholder
+        searchTextField.text = baseUrl
         searchTextField.layer.borderColor = UIColor.darkGray.cgColor
         searchTextField.layer.borderWidth = UIConstants.borderWidth
         searchTextField.layer.cornerRadius = UIConstants.cornerRadius
+        searchTextField.addTarget(self, action: #selector(searchTextFieldEditingChanged), for: .editingChanged)
         
         searchTextField.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(Layout.top.rawValue)
@@ -54,33 +58,44 @@ final class EKBrowserViewController: UIViewController {
     private func hideKeyboard() {
         view.endEditing(true)
     }
-}
-
-extension EKBrowserViewController: UITextFieldDelegate
-{
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        // make request
-        hideKeyboard()
-        return true
+    
+    private func requestBy(URL: URL) {
+        let request = URLRequest(url: URL)
+        // MARK: - Here we have a warning in the console "[Security] This method should not be called on the main thread as it may lead to UI unresponsiveness." but webView.load can be called only in the main thread. IMHO its just Xcode 14 bug.
+        self.webView.load(request)
     }
     
-    func textFieldDidEndEditing(_ textField: UITextField) {
+    /// Check is request needed
+    @objc private func searchTextFieldEditingChanged() {
         pendingRequestWorkItem?.cancel()
         
         let requestWorkItem = DispatchWorkItem { [weak self] in
-            guard let self = self else { return }
+            // TODO in real project: handle else
+            guard let self = self, let searchText = self.searchTextField.text else { return }
             
-//            if searchText.removeWhitespace().isEmpty {
-//                self.stations.removeAll()
-//            } else {
-//                self.search(searchText)
-//            }
+            if !searchText.trimmingCharacters(in: .whitespaces).isEmpty, let url = URL(string: searchText) {
+                self.requestBy(URL: url)
+            }
             self.hideKeyboard()
         }
         
         pendingRequestWorkItem = requestWorkItem
         
         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(pendingValueForAutoRequest), execute: requestWorkItem)
+    }
+}
+
+extension EKBrowserViewController: UITextFieldDelegate
+{
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        // todo: handle case in real project
+        guard let searchText = textField.text else { return true }
+        
+        if !searchText.trimmingCharacters(in: .whitespaces).isEmpty, let url = URL(string: searchText) {
+            self.requestBy(URL: url)
+        }
+        hideKeyboard()
+        return true
     }
 }
 
